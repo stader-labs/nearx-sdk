@@ -16,11 +16,7 @@ import { isBrowser } from './utils';
 
 type NearxPoolClient = Iface;
 export const NearxPoolClient = {
-  async new(
-    networkId: 'testnet' | 'mainnet',
-    contractName: string,
-    accountId: string,
-  ): Promise<NearxPoolClient> {
+  async new(networkId: Network, accountId: string): Promise<NearxPoolClient> {
     // Depending on being in the browser or not,
     // the config is set from a local keystore or the browser wallet:
     const config = configFromNetwork(networkId);
@@ -28,6 +24,11 @@ export const NearxPoolClient = {
     const near = await nearjs.connect(config);
 
     let contract: NearxContract;
+
+    let contractName = 'v2-nearx.stader-labs.near';
+    if (networkId === 'testnet') {
+      contractName = 'v2-nearx.staderlabs.testnet';
+    }
 
     if (accountId == null) {
       throw new Error('When used in a CLI, the accountId must be specified');
