@@ -3,7 +3,6 @@ const nearjs = require('near-api-js');
 import { ConnectConfig } from 'near-api-js';
 import * as os from 'os';
 import {
-  Balance,
   NearxAccount,
   NearxPoolClient as Iface,
   NearxStakePoolAccount,
@@ -44,21 +43,6 @@ export const NearxPoolClient = {
       contract,
 
       // View methods:
-      async stakedBalance(): Promise<Balance> {
-        return BigInt(
-          await contract.get_account_staked_balance({
-            account_id: accountId,
-          }),
-        );
-      },
-      async totalBalance(): Promise<Balance> {
-        return BigInt(
-          await contract.get_account_total_balance({
-            account_id: accountId,
-          }),
-        );
-      },
-
       async validators(): Promise<ValidatorInfo[]> {
         return contract.get_validators({});
       },
@@ -100,14 +84,14 @@ export const NearxPoolClient = {
       },
 
       // User-facing methods:
-      async storageDeposit(): Promise<string> {
-        return contract.storage_deposit({
+      async storageDeposit(): Promise<void> {
+        await contract.storage_deposit({
           args: {},
           amount: '2500000000000000000000',
         });
       },
 
-      async depositAndStake(amount: string): Promise<string> {
+      async depositAndStake(amount: string): Promise<void> {
         // First check storage deposit and then stake, use batch transactions
         const storageBalance = await contract.storage_balance_of({
           account_id: accountId,
@@ -141,34 +125,32 @@ export const NearxPoolClient = {
           receiverId: contractName,
           actions,
         });
-
-        return '';
       },
 
-      async unstake(amount: string): Promise<string> {
-        return contract.unstake({
+      async unstake(amount: string): Promise<void> {
+        await contract.unstake({
           args: {
             amount: amount,
           },
         });
       },
 
-      async unstakeAll(): Promise<string> {
-        return contract.unstake_all({
+      async unstakeAll(): Promise<void> {
+        await contract.unstake_all({
           args: {},
         });
       },
 
-      async withdraw(amount: string): Promise<string> {
-        return contract.withdraw({
+      async withdraw(amount: string): Promise<void> {
+        await contract.withdraw({
           args: {
             amount: amount,
           },
         });
       },
 
-      async withdrawAll(): Promise<string> {
-        return contract.withdraw_all({
+      async withdrawAll(): Promise<void> {
+        await contract.withdraw_all({
           args: {},
         });
       },
