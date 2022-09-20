@@ -1,0 +1,9 @@
+target/
+.idea/
+.vscode/
+neardev/
+.env
+.DS_Store
+**/dist/
+node_modules/
+**/yarn-error.log
