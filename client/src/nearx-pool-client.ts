@@ -43,7 +43,7 @@ export const NearxPoolClient = {
       contract,
 
       // View methods:
-      async validators(): Promise<ValidatorInfo[]> {
+      async getValidators(): Promise<ValidatorInfo[]> {
         return contract.get_validators({});
       },
 
