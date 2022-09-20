@@ -3,7 +3,6 @@ const nearjs = require('near-api-js');
 import { ConnectConfig } from 'near-api-js';
 import * as os from 'os';
 import {
-  Balance,
   NearxAccount,
   NearxPoolClient as Iface,
   NearxStakePoolAccount,
@@ -44,21 +43,6 @@ export const NearxPoolClient = {
       contract,
 
       // View methods:
-      async stakedBalance(): Promise<Balance> {
-        return BigInt(
-          await contract.get_account_staked_balance({
-            account_id: accountId,
-          }),
-        );
-      },
-      async totalBalance(): Promise<Balance> {
-        return BigInt(
-          await contract.get_account_total_balance({
-            account_id: accountId,
-          }),
-        );
-      },
-
       async validators(): Promise<ValidatorInfo[]> {
         return contract.get_validators({});
       },
