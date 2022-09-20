@@ -6,6 +6,10 @@ export type Balance = bigint;
 export type Epoch = bigint;
 export type AccountId = string;
 
+/** Based on the network, the sdk selects the contract to interact with
+ * mainnet network will interact with v2-nearx.stader-labs.near
+ * testnet network will interact with v2-nearx.staderlabs.testnet
+ */
 export type Network = 'testnet' | 'mainnet';
 
 export interface NearxStakingPool {
@@ -14,7 +18,7 @@ export interface NearxStakingPool {
   /**
    * Returns a list of the validators.
    */
-  validators(): Promise<ValidatorInfo[]>;
+  getValidators(): Promise<ValidatorInfo[]>;
 
   /**
    * Returns user's account which contains the staked, unstaked balance and the epoch height
@@ -64,7 +68,7 @@ export interface NearxStakingPool {
   /**
    * Deposit NEAR(0.0025N to be exact) to reserve storage on the NEARx contract
    */
-  storageDeposit(): Promise<void>
+  storageDeposit(): Promise<void>;
 
   /**
    * Stake tokens inside the pool.
@@ -74,7 +78,7 @@ export interface NearxStakingPool {
 
   /**
    * Unstake tokens from the pool.
-   * @param amount - Amount of yNEAR(NEAR in 10^24) to be unstaked 
+   * @param amount - Amount of yNEAR(NEAR in 10^24) to be unstaked
    */
   unstake(amount: string): Promise<void>;
 
@@ -85,7 +89,7 @@ export interface NearxStakingPool {
 
   /**
    * Withdraw unstaked tokens from the pool.
-   * @param amount - Amount of yNEAR(NEAR in 10^24) to be withdrawn 
+   * @param amount - Amount of yNEAR(NEAR in 10^24) to be withdrawn
    */
   withdraw(amount: string): Promise<void>;
 
@@ -107,11 +111,17 @@ export interface NearxPoolClient extends NearxStakingPool {
  * Information of a validator in the NEARX stake pool
  */
 export interface ValidatorInfo {
+  /** Account id of the validator. This is the address of the stake pool contract */
   account_id: AccountId;
+  /** Total amount staked with the validator by the NEARX contract */
   staked: Balance;
+  /** Total amount unstaked with the validator by the NEARX contract */
   unstaked: Balance;
+  /** The epoch at which we last reconciled the rewards for this validator  */
   last_asked_rewards_epoch_height: Epoch;
+  /** The epoch at which we last unstaked from this validator */
   last_unstake_start_epoch: Epoch;
+  /** true if the validator is in the validator set of NEARX */
   paused: boolean;
 }
 
@@ -119,20 +129,34 @@ export interface ValidatorInfo {
  * User account in NEARx. This account needs to be created using storage_deposit
  */
 export interface NearxAccount {
+  /** Account id of the user */
   account_id: AccountId;
+  /** Total NEAR which the user has unstaked */
   unstaked_balance: Balance;
+  /** Total NEAR value of the users NEARX. It is the product of the users NEARX balance
+   * and the NEARX price
+   */
   staked_balance: Balance;
+  /** The epoch at which a user can withdraw their unstaked NEAR */
   withdrawable_epoch: Epoch;
 }
 
 /**
- * Similar to NearxAccount but has an interface similar to the user account 
+ * Similar to NearxAccount but has an interface similar to the user account
  * interface of traditional NEAR stake pool contract
  */
 export interface NearxStakePoolAccount {
+  /** Account id of the user */
   account_id: AccountId;
+  /** Total NEAR which the user has unstaked */
   unstaked_balance: Balance;
+  /** Total NEAR value of the users NEARX. It is the product of the users NEARX balance
+   * and the NEARX price
+   */
   staked_balance: Balance;
+  /** true if the user can withdraw his unstaked amount.
+   * It is essentially withdrawable_epoch <= current_epoch
+   */
   can_withdraw: Epoch;
 }
 
