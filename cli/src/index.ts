@@ -5,18 +5,6 @@ const commands: {
   [name: string]: (client: nearx.NearxPoolClient, accountId: string) => Promise<void>;
 } = {
   // Read:
-  validators: command.displayValidators,
-  epoch: async (client) => console.log(await client.currentEpoch()),
-  snapshot: command.displaySnapshot,
-  balance: command.displayBalance,
-  // Operation:
-  init: command.runInit,
-  'sync-balances': command.syncBalances,
-  autocompound: command.epochAutocompoundRewards,
-  stake: command.stake,
-  unstake: command.unstake,
-  withdraw: command.withdraw,
-  all: command.runWholeEpoch,
   // User:
   deposit: command.userDeposit,
 };
