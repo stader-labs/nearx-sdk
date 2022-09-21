@@ -1,10 +1,10 @@
 {
-  "include": ["src/*", "../node_modules/types-bn/index.d.ts", "types"],
+  "include": ["src/**/*"],
   "compilerOptions": {
-    "composite": true,
+    // "composite": true,
     "module": "commonjs",
-    "lib": ["esnext", "dom"],
-    "target": "es6",
+    "lib": ["ES5"],
+    "target": "ES5",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -19,7 +19,6 @@
     "outDir": "dist",
     "declaration": true,
     "sourceMap": true,
-    "importHelpers": true,
-    "noEmit": false
+    // "importHelpers": false,
   }
 }
