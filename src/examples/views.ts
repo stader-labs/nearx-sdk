@@ -1,4 +1,4 @@
-import { NearxPoolClient, Network } from '..';
+import { Network } from '..';
 
 export const getUserAccount = async (network: Network, accountId: string) => {
   const nearxPoolClient = await NearxPoolClient.new(network, accountId);

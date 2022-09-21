@@ -101,7 +101,7 @@ export interface NearxStakingPool {
   withdrawAll(): Promise<void>;
 }
 
-export interface NearxPoolClient extends NearxStakingPool {
+export interface INearxPoolClient extends NearxStakingPool {
   near: Near;
   config: ConnectConfig;
   contract: NearxContract;
@@ -172,7 +172,7 @@ export interface StorageBalance {
 }
 
 export const NearxPoolClient = {
-  async new(networkId: Network, accountId: string): Promise<NearxPoolClient> {
+  async new(networkId: Network, accountId: string): Promise<INearxPoolClient> {
     // Depending on being in the browser or not,
     // the config is set from a local keystore or the browser wallet:
     const config = configFromNetwork(networkId);

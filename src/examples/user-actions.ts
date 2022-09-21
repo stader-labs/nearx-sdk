@@ -1,4 +1,4 @@
-import { NearxPoolClient, Network } from '..';
+import { Network } from '..';
 
 export const depositAndStake = async (
   network: Network,
