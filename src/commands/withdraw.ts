@@ -23,7 +23,7 @@ export const builder: CommandBuilder = (yargs) =>
 export const handler = async (argv: Arguments) => {
   console.log(`Withdrawing ${argv.amount} from ${argv.accountId}`);
 
-  const nearxPoolClient = await NearxPoolClient.new(
+  const nearxPoolClient = await NearxPoolClient.create(
     argv.network as Network,
     argv.accountId as string,
   );

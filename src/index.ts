@@ -172,7 +172,10 @@ export interface StorageBalance {
 }
 
 export const NearxPoolClient = {
-  async new(networkId: Network, accountId: string): Promise<INearxPoolClient> {
+  async create(
+    networkId: Network,
+    accountId: string
+  ): Promise<INearxPoolClient> {
     // Depending on being in the browser or not,
     // the config is set from a local keystore or the browser wallet:
     const config = configFromNetwork(networkId);
