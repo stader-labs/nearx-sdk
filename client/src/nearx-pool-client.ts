@@ -1,5 +1,3 @@
-const nearjs = require('near-api-js');
-
 import { ConnectConfig } from 'near-api-js';
 import * as os from 'os';
 import {
@@ -12,6 +10,8 @@ import {
 } from '.';
 import { createContract, NearxContract } from './contract';
 import { isBrowser } from './utils';
+
+const nearjs = require('near-api-js');
 
 type NearxPoolClient = Iface;
 export const NearxPoolClient = {

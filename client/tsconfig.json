@@ -1,25 +1,25 @@
 {
-  "include": ["src/*", "../node_modules/types-bn/index.d.ts", "types"],
+  "include": ["src/**/*"],
   "compilerOptions": {
-    "composite": true,
-    "module": "commonjs",
+    // "composite": true,
+    "module": "ESNext",
     "lib": ["esnext", "dom"],
-    "target": "es6",
+    "target": "ESNext",
     "moduleResolution": "node",
-    "esModuleInterop": true,
+    "esModuleInterop": false,
     "skipLibCheck": true,
 
-    "strict": true,
-    "noImplicitReturns": true,
-    "noImplicitAny": true,
-    "allowSyntheticDefaultImports": true,
-    "noFallthroughCasesInSwitch": true,
+    // "strict": true,
+    // "noImplicitReturns": true,
+    // "noImplicitAny": true,
+    // "allowSyntheticDefaultImports": true,
+    // "noFallthroughCasesInSwitch": true,
 
     "rootDir": "src",
     "outDir": "dist",
-    "declaration": true,
-    "sourceMap": true,
-    "importHelpers": true,
-    "noEmit": false
+    // "declaration": true,
+    // "sourceMap": true,
+    // "importHelpers": true,
+    // "resolveJsonModule": true
   }
 }

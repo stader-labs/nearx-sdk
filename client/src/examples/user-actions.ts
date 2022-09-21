@@ -1,5 +1,5 @@
-import { Network } from '..';
-import { NearxPoolClient } from '../nearx-pool-client';
+import { Network } from "..";
+import { NearxPoolClient } from "../nearx-pool-client";
 
 const depositAndStake = async (network: Network, accountId: string, amount: string) => {
   const nearxPoolClient = await NearxPoolClient.new(network, accountId);
