@@ -1,5 +1,10 @@
 import * as nearjs from 'near-api-js';
-import { NearxAccount, NearxStakePoolAccount, StorageBalance, ValidatorInfo } from '.';
+import {
+  NearxAccount,
+  NearxStakePoolAccount,
+  StorageBalance,
+  ValidatorInfo,
+} from '.';
 import { nameof } from './utils';
 
 export type NearxContract = nearjs.Contract & RpcCallsStakingPool & RpcCallsFt;
@@ -49,7 +54,10 @@ export interface RpcCallsStakingPool {
   unstake_all(params: CallRpcParams): Promise<string>;
 }
 
-export function createContract(account: nearjs.Account, contractName: string): NearxContract {
+export function createContract(
+  account: nearjs.Account,
+  contractName: string
+): NearxContract {
   return new nearjs.Contract(
     // The account object that is connecting:
     account,
@@ -88,6 +96,6 @@ export function createContract(account: nearjs.Account, contractName: string): N
         nameof<RpcCallsFt>('ft_transfer'),
         nameof<RpcCallsFt>('ft_transfer_call'),
       ],
-    },
+    }
   ) as NearxContract;
 }

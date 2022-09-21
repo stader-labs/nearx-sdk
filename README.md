@@ -2,7 +2,7 @@
 
 This repo is an SDK for third party clients to programatically integrate with NEARX.
 
-## Documentation. 
+## Documentation.
 
 To view each functions documentations, run
 
@@ -11,8 +11,8 @@ cd client;
 npm run docs;
 ```
 
-There are examples in the client/examples directory for the developer to understand how to 
-use each method. 
+There are examples in the client/examples directory for the developer to understand how to
+use each method.
 
 ## Installation
 

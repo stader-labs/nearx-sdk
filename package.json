@@ -1,20 +1,59 @@
 {
-  "private": true,
-  "workspaces": [
-    "client"
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
   ],
-  "dependencies": {},
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.8.1",
-    "@typescript-eslint/parser": "^5.8.1",
-    "eslint": "^8.5.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.3.5"
+  "engines": {
+    "node": ">=12"
   },
   "scripts": {
-    "build": "tsc --build client/tsconfig.json",
-    "nearx": "yarn workspace --silent nearx-app --silent ts-node src/index.ts"
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "stader-nearx-sdk",
+  "author": "ksrakhilesh",
+  "module": "dist/nearx-sdk.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/nearx-sdk.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/nearx-sdk.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^7.0.8",
+    "@types/yargs": "^17.0.12",
+    "husky": "^8.0.1",
+    "size-limit": "^7.0.8",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "near-api-js": "^1.0.0",
+    "yargs": "^17.5.1"
   }
 }

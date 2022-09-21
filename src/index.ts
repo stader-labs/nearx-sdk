@@ -1,7 +1,7 @@
+import * as nearjs from 'near-api-js';
 import { ConnectConfig, Near } from 'near-api-js';
+import * as os from 'os';
 import { createContract, NearxContract } from './contract';
-import * as nearjs from "near-api-js";
-import * as os from "os";
 import { isBrowser } from './utils';
 
 export type Balance = bigint;
@@ -222,7 +222,9 @@ export const NearxPoolClient = {
         return contract.get_total_staked_balance({});
       },
 
-      async getUserStakePoolAccount(user: string): Promise<NearxStakePoolAccount> {
+      async getUserStakePoolAccount(
+        user: string
+      ): Promise<NearxStakePoolAccount> {
         return contract.get_account({
           account_id: user,
         });
