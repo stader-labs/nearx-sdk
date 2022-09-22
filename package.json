@@ -30,7 +30,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "stader-nearx-sdk",
+  "name": "nearx-sdk",
   "author": "ksrakhilesh",
   "module": "dist/nearx-sdk.esm.js",
   "size-limit": [
