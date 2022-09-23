@@ -57,6 +57,18 @@ export const getTotalNearxSupply = async (
 };
 ```
 
+### To get the NEARX validators
+```javascript
+export const getNearxValidators = async (
+  network: Network,
+  accountId: string
+) => {
+  const nearxPoolClient = await NearxPoolClient.create(network, accountId);
+
+  return nearxPoolClient.getValidators();
+};
+```
+
 ### To get the total NEAR staked with the NEARX validator pool
 ```javascript
 export const getTotalNearStaked = async (
