@@ -52,6 +52,7 @@ export interface RpcCallsStakingPool {
   withdraw_all(params: CallRpcParams): Promise<string>;
   unstake(params: CallRpcParams): Promise<string>;
   unstake_all(params: CallRpcParams): Promise<string>;
+  upgrade(code: any, gas: any): Promise<string>;
 }
 
 export function createContract(

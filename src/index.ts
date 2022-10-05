@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import * as nearjs from 'near-api-js';
 import { ConnectConfig, Near } from 'near-api-js';
 import * as os from 'os';
@@ -99,6 +100,11 @@ export interface NearxStakingPool {
    * Withdraw unstaked tokens from the pool.
    */
   withdrawAll(): Promise<void>;
+
+  /**
+   * Upgrades the contracts to the given wasm file
+   */
+  contractUpgrade(wasmFile: string): Promise<any>;
 }
 
 export interface INearxPoolClient extends NearxStakingPool {
@@ -299,6 +305,11 @@ export const NearxPoolClient = {
         await contract.withdraw_all({
           args: {},
         });
+      },
+
+      async contractUpgrade(wasmFile: string): Promise<any> {
+        const code = readFileSync(wasmFile);
+        return contract.upgrade(code, '300000000000000');
       },
     };
 
