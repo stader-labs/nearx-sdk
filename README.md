@@ -4,7 +4,7 @@ An sdk for for third party clients to programatically interact with nearx.
 
 ## Get Started
 
-1. Add nearx-sdk to your package.json file. Pick the latest version(which is currently 0.3.0)
+1. Add nearx-sdk to your package.json file. Pick the latest version(which is currently 1.0.0)
 2. Run `near login` to import the private keys of your account to ~/.near-credentials directory. If you intend to interact with the mainnet contract then run `NEAR_ENV=mainnet near login`.
 
 ## Important Parameters
