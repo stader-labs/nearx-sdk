@@ -75,36 +75,43 @@ export interface NearxStakingPool {
    * Stake tokens inside the pool.
    * @param amount - Amount of yNEAR(NEAR in 10^24) to be deposited
    */
-  depositAndStake(amount: string): Promise<void>;
+  depositAndStake(
+    amount: string,
+    memo?: { [k: string]: string }
+  ): Promise<void>;
 
   /**
    * Unstake tokens from the pool.
    * @param amount - Amount of yNEAR(NEAR in 10^24) to be unstaked
    */
-  unstake(amount: string): Promise<void>;
+  unstake(amount: string, memo?: { [k: string]: string }): Promise<void>;
 
   /**
    * Unstake tokens from the pool.
    */
-  unstakeAll(): Promise<void>;
+  unstakeAll(memo?: { [k: string]: string }): Promise<void>;
 
   /**
    * Withdraw unstaked tokens from the pool.
    * @param amount - Amount of yNEAR(NEAR in 10^24) to be withdrawn
    */
-  withdraw(amount: string): Promise<void>;
+  withdraw(amount: string, memo?: { [k: string]: string }): Promise<void>;
 
   /**
    * Withdraw unstaked tokens from the pool.
    */
-  withdrawAll(): Promise<void>;
+  withdrawAll(memo?: { [k: string]: string }): Promise<void>;
 
   /**
    * Transfer nearx to a user
    * @param user
    * @param amount
    */
-  transferNearxToUser(user: string, amount: string): Promise<void>;
+  transferNearxToUser(
+    user: string,
+    amount: string,
+    memo?: { [k: string]: string }
+  ): Promise<void>;
 
   /**
    * Transfer nearx to a contract with a callback
@@ -115,7 +122,8 @@ export interface NearxStakingPool {
   transferNearxToContract(
     contract: string,
     amount: string,
-    msg: string
+    msg: string,
+    memo?: { [k: string]: string }
   ): Promise<void>;
 }
 
@@ -290,75 +298,99 @@ export const NearxPoolClient = {
       },
 
       // User-facing methods:
-      async storageDeposit(): Promise<void> {
+      async storageDeposit(memo?: { [k: string]: string }): Promise<void> {
         await account.functionCall({
           contractId: contractName,
           methodName: 'storage_deposit',
-          args: {},
+          args: {
+            ...memo,
+          },
           attachedDeposit: '2500000000000000000000',
         });
       },
 
-      async depositAndStake(amount: string): Promise<void> {
+      async depositAndStake(
+        amount: string,
+        memo?: { [k: string]: string }
+      ): Promise<void> {
         // First check storage deposit and then stake, use batch transactions
         const storageBalance = this.getStorageBalance(accountId);
 
         if (!storageBalance) {
           // add storage_deposit
-          await this.storageDeposit();
+          await this.storageDeposit(memo);
         }
 
         await account.functionCall({
           contractId: contractName,
           methodName: 'deposit_and_stake',
-          args: {},
+          args: {
+            ...memo,
+          },
           attachedDeposit: amount,
         });
       },
 
-      async unstake(amount: string): Promise<void> {
+      async unstake(
+        amount: string,
+        memo?: { [k: string]: string }
+      ): Promise<void> {
         await account.functionCall({
           contractId: contractName,
           methodName: 'unstake',
           args: {
             amount: amount,
+            ...memo,
           },
         });
       },
 
-      async unstakeAll(): Promise<void> {
+      async unstakeAll(memo?: { [k: string]: string }): Promise<void> {
         await account.functionCall({
           contractId: contractName,
           methodName: 'unstake_all',
-          args: {},
+          args: {
+            ...memo,
+          },
         });
       },
 
-      async withdraw(amount: string): Promise<void> {
+      async withdraw(
+        amount: string,
+        memo?: { [k: string]: string }
+      ): Promise<void> {
         await account.functionCall({
           contractId: contractName,
           methodName: 'withdraw',
           args: {
             amount: amount,
+            ...memo,
           },
         });
       },
 
-      async withdrawAll(): Promise<void> {
+      async withdrawAll(memo?: { [k: string]: string }): Promise<void> {
         await account.functionCall({
           contractId: contractName,
           methodName: 'withdraw_all',
-          args: {},
+          args: {
+            ...memo,
+          },
         });
       },
 
-      async transferNearxToUser(user: string, amount: string): Promise<void> {
+      async transferNearxToUser(
+        user: string,
+        amount: string,
+        memo?: { [k: string]: string }
+      ): Promise<void> {
         await account.functionCall({
           contractId: contractName,
           methodName: 'ft_transfer',
           args: {
             receiver_id: user,
             amount: amount,
+            ...memo,
           },
           attachedDeposit: 1,
         });
@@ -367,7 +399,8 @@ export const NearxPoolClient = {
       async transferNearxToContract(
         receivingContract: string,
         amount: string,
-        msg: string
+        msg: string,
+        memo?: { [k: string]: string }
       ): Promise<void> {
         await account.functionCall({
           contractId: contractName,
@@ -376,6 +409,7 @@ export const NearxPoolClient = {
             receiver_id: receivingContract,
             amount: amount,
             msg: msg,
+            ...memo,
           },
           attachedDeposit: 1,
         });
