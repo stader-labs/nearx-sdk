@@ -1,7 +1,6 @@
 import * as nearjs from 'near-api-js';
 import { ConnectConfig, Near } from 'near-api-js';
 import * as os from 'os';
-import { createContract, NearxContract } from './contract';
 import { isBrowser } from './utils';
 
 export type Balance = bigint;
@@ -99,12 +98,30 @@ export interface NearxStakingPool {
    * Withdraw unstaked tokens from the pool.
    */
   withdrawAll(): Promise<void>;
+
+  /**
+   * Transfer nearx to a user
+   * @param user
+   * @param amount
+   */
+  transferNearxToUser(user: string, amount: string): Promise<void>;
+
+  /**
+   * Transfer nearx to a contract with a callback
+   * @param contract
+   * @param amount
+   * @param msg
+   */
+  transferNearxToContract(
+    contract: string,
+    amount: string,
+    msg: string
+  ): Promise<void>;
 }
 
 export interface INearxPoolClient extends NearxStakingPool {
   near: Near;
   config: ConnectConfig;
-  contract: NearxContract;
 }
 
 // DTOs:
@@ -182,8 +199,6 @@ export const NearxPoolClient = {
     // Connect to NEAR:
     const near = await nearjs.connect(config);
 
-    let contract: NearxContract;
-
     let contractName = 'v2-nearx.stader-labs.near';
     if (networkId === 'testnet') {
       contractName = 'v2-nearx.staderlabs.testnet';
@@ -195,86 +210,116 @@ export const NearxPoolClient = {
     // Use the previously set keystore:
     const account = new nearjs.Account(near.connection, accountId);
 
-    contract = createContract(account, contractName);
-
     const client = {
       near,
       config,
-      contract,
 
       // View methods:
       async getValidators(): Promise<ValidatorInfo[]> {
-        return contract.get_validators({});
+        return account.viewFunctionV2({
+          contractId: contractName,
+          methodName: 'get_validators',
+          args: {},
+        }) as Promise<ValidatorInfo[]>;
       },
 
       async getUserAccount(user: string): Promise<NearxAccount> {
-        return contract.get_user_account({
-          account_id: user,
-        });
+        return account.viewFunctionV2({
+          contractId: contractName,
+          methodName: 'get_user_account',
+          args: {
+            account_id: user,
+          },
+        }) as Promise<NearxAccount>;
       },
 
       async getNearxPrice(): Promise<string> {
-        return contract.get_nearx_price({});
+        return account.viewFunctionV2({
+          contractId: contractName,
+          methodName: 'get_nearx_price',
+          args: {},
+        }) as Promise<string>;
       },
 
       async getTotalNearxSupply(): Promise<string> {
-        return contract.ft_total_supply({});
+        return account.viewFunctionV2({
+          contractId: contractName,
+          methodName: 'ft_total_supply',
+          args: {},
+        }) as Promise<string>;
       },
 
       async getTotalNearStaked(): Promise<string> {
-        return contract.get_total_staked_balance({});
+        return account.viewFunctionV2({
+          contractId: contractName,
+          methodName: 'get_total_staked_balance',
+          args: {},
+        }) as Promise<string>;
       },
 
       async getUserStakePoolAccount(
         user: string
       ): Promise<NearxStakePoolAccount> {
-        return contract.get_account({
-          account_id: user,
-        });
+        return account.viewFunctionV2({
+          contractId: contractName,
+          methodName: 'get_account',
+          args: {
+            account_id: user,
+          },
+        }) as Promise<NearxStakePoolAccount>;
       },
 
       async getUserNearxBalance(user: string): Promise<string> {
-        return contract.ft_balance_of({
-          account_id: user,
-        });
+        return account.viewFunctionV2({
+          contractId: contractName,
+          methodName: 'ft_balance_of',
+          args: {
+            account_id: user,
+          },
+        }) as Promise<string>;
       },
 
       async getStorageBalance(user: string): Promise<StorageBalance | null> {
-        return contract.storage_balance_of({
-          account_id: user,
-        });
+        return account.viewFunctionV2({
+          contractId: contractName,
+          methodName: 'storage_balance_of',
+          args: {
+            account_id: user,
+          },
+        }) as Promise<StorageBalance | null>;
       },
 
       // User-facing methods:
       async storageDeposit(): Promise<void> {
-        await contract.storage_deposit({
+        await account.functionCall({
+          contractId: contractName,
+          methodName: 'storage_deposit',
           args: {},
-          amount: '2500000000000000000000',
+          attachedDeposit: '2500000000000000000000',
         });
       },
 
       async depositAndStake(amount: string): Promise<void> {
         // First check storage deposit and then stake, use batch transactions
-        const storageBalance = await contract.storage_balance_of({
-          account_id: accountId,
-        });
+        const storageBalance = this.getStorageBalance(accountId);
 
         if (!storageBalance) {
           // add storage_deposit
-          await contract.storage_deposit({
-            args: {},
-            amount: '2500000000000000000000',
-          });
+          await this.storageDeposit();
         }
 
-        await contract.deposit_and_stake({
+        await account.functionCall({
+          contractId: contractName,
+          methodName: 'deposit_and_stake',
           args: {},
-          amount,
+          attachedDeposit: amount,
         });
       },
 
       async unstake(amount: string): Promise<void> {
-        await contract.unstake({
+        await account.functionCall({
+          contractId: contractName,
+          methodName: 'unstake',
           args: {
             amount: amount,
           },
@@ -282,13 +327,17 @@ export const NearxPoolClient = {
       },
 
       async unstakeAll(): Promise<void> {
-        await contract.unstake_all({
+        await account.functionCall({
+          contractId: contractName,
+          methodName: 'unstake_all',
           args: {},
         });
       },
 
       async withdraw(amount: string): Promise<void> {
-        await contract.withdraw({
+        await account.functionCall({
+          contractId: contractName,
+          methodName: 'withdraw',
           args: {
             amount: amount,
           },
@@ -296,8 +345,39 @@ export const NearxPoolClient = {
       },
 
       async withdrawAll(): Promise<void> {
-        await contract.withdraw_all({
+        await account.functionCall({
+          contractId: contractName,
+          methodName: 'withdraw_all',
           args: {},
+        });
+      },
+
+      async transferNearxToUser(user: string, amount: string): Promise<void> {
+        await account.functionCall({
+          contractId: contractName,
+          methodName: 'ft_transfer',
+          args: {
+            receiver_id: user,
+            amount: amount,
+          },
+          attachedDeposit: 1,
+        });
+      },
+
+      async transferNearxToContract(
+        receivingContract: string,
+        amount: string,
+        msg: string
+      ): Promise<void> {
+        await account.functionCall({
+          contractId: contractName,
+          methodName: 'ft_transfer_call',
+          args: {
+            receiver_id: receivingContract,
+            amount: amount,
+            msg: msg,
+          },
+          attachedDeposit: 1,
         });
       },
     };
