@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import * as nearjs from 'near-api-js';
 import { ConnectConfig, Near } from 'near-api-js';
 import * as os from 'os';
@@ -100,31 +101,31 @@ export interface NearxStakingPool {
   /**
    * Withdraw unstaked tokens from the pool.
    */
-  withdrawAll(memo?: { [k: string]: string }): Promise<void>;
+  withdrawAll(): Promise<void>;
 
   /**
-   * Transfer nearx to a user
-   * @param user
-   * @param amount
+   * Upgrades the contracts to the given wasm file
+   */
+  contractUpgrade(wasmFile: string): Promise<any>;
+
+  /**
+   * Transfer nearx to user
    */
   transferNearxToUser(
     user: string,
     amount: string,
     memo?: { [k: string]: string }
-  ): Promise<void>;
+  ): Promise<any>;
 
   /**
-   * Transfer nearx to a contract with a callback
-   * @param contract
-   * @param amount
-   * @param msg
+   * Transfer nearx to contract
    */
   transferNearxToContract(
-    contract: string,
+    receivingContract: string,
     amount: string,
     msg: string,
     memo?: { [k: string]: string }
-  ): Promise<void>;
+  ): Promise<any>;
 }
 
 export interface INearxPoolClient extends NearxStakingPool {
@@ -209,7 +210,7 @@ export const NearxPoolClient = {
 
     let contractName = 'v2-nearx.stader-labs.near';
     if (networkId === 'testnet') {
-      contractName = 'v2-nearx.staderlabs.testnet';
+      contractName = 'dev-1670086219937-52815161512614';
     }
 
     if (accountId == null) {
@@ -412,6 +413,20 @@ export const NearxPoolClient = {
             ...memo,
           },
           attachedDeposit: 1,
+        });
+      },
+
+      async contractUpgrade(wasmFile: string): Promise<any> {
+        const code = readFileSync(wasmFile);
+        // return contract.upgrade(code, '300000000000000');
+        await account.functionCall({
+          contractId: contractName,
+          methodName: 'upgrade',
+          args: {
+            code: code,
+          },
+          attachedDeposit: 1,
+          gas: '300000000000000',
         });
       },
     };
