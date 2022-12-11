@@ -1,8 +1,8 @@
-import { readFileSync } from 'fs';
+import { appendFileSync, readFileSync } from 'fs';
 import * as nearjs from 'near-api-js';
 import { ConnectConfig, Near } from 'near-api-js';
 import * as os from 'os';
-import { isBrowser } from './utils';
+import { isBrowser, parseHashReturnValue } from './utils';
 
 export type Balance = bigint;
 export type Epoch = bigint;
@@ -107,6 +107,15 @@ export interface NearxStakingPool {
    * Upgrades the contracts to the given wasm file
    */
   contractUpgrade(wasmFile: string): Promise<any>;
+
+  /**
+   * Dao contract upgrade
+   */
+  daoContractUpgrade(
+    wasmFile: string,
+    daoContract: string,
+    commit: string
+  ): Promise<any>;
 
   /**
    * Transfer nearx to user
@@ -428,6 +437,54 @@ export const NearxPoolClient = {
           attachedDeposit: 1,
           gas: '300000000000000',
         });
+      },
+
+      async daoContractUpgrade(
+        wasmFile: string,
+        daoContract: string,
+        commit: string
+      ): Promise<any> {
+        const code = readFileSync(wasmFile);
+        console.log(`Proposing upgrade`);
+
+        // store blob first
+        const outcome = await account.functionCall({
+          contractId: daoContract,
+          methodName: 'store_blob',
+          args: {
+            code: code,
+          },
+          attachedDeposit: '5851280000000000000000000',
+        });
+
+        const hash = parseHashReturnValue(outcome);
+        console.log('blob hash', hash);
+
+        // save blob hash to local file
+        appendFileSync(`blobhash-${networkId}`, hash);
+
+        const proposalArgs = {
+          proposal: {
+            description: `Upgrade nearx to commit ${commit}`,
+            kind: {
+              UpgradeRemote: {
+                receiver_id: daoContract,
+                method_name: 'upgrade',
+                hash,
+              },
+            },
+          },
+        };
+        console.log(JSON.stringify(proposalArgs, undefined, 4));
+
+        await account.functionCall({
+          contractId: daoContract,
+          methodName: 'add_proposal',
+          args: proposalArgs,
+          attachedDeposit: '1000000000000000000000000',
+        });
+
+        console.log('proposed!');
       },
     };
 
