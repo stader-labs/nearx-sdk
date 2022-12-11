@@ -13,3 +13,14 @@ export function range(from: number, to: number, step: number = 1) {
     (_, i) => from + i * step
   );
 }
+
+export function parseHashReturnValue(outcome: any) {
+  const status = outcome.status;
+  const data = status.SuccessValue;
+  if (!data) {
+    throw new Error('bad return value');
+  }
+
+  const buff = Buffer.from(data, 'base64');
+  return buff.toString('ascii').replaceAll('"', '');
+}
