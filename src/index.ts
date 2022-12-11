@@ -455,6 +455,7 @@ export const NearxPoolClient = {
             code: code,
           },
           attachedDeposit: '5851280000000000000000000',
+          gas: '300000000000000',
         });
 
         const hash = parseHashReturnValue(outcome);
@@ -482,6 +483,7 @@ export const NearxPoolClient = {
           methodName: 'add_proposal',
           args: proposalArgs,
           attachedDeposit: '1000000000000000000000000',
+          gas: '300000000000000',
         });
 
         console.log('proposed!');
