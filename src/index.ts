@@ -210,7 +210,7 @@ export const NearxPoolClient = {
 
     let contractName = 'v2-nearx.stader-labs.near';
     if (networkId === 'testnet') {
-      contractName = 'dev-1670086219937-52815161512614';
+      contractName = 'v2-nearx.staderlabs.testnet';
     }
 
     if (accountId == null) {
